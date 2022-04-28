@@ -298,9 +298,9 @@ Vue.component('game', {
                 this.min = '03';
                 this.sec = '00';
 
-                for (let i = 0; i < this.moveAnimals.length; i++) {
-                    this.moveAnimals[i].position = '40px';
-                }
+                this.moveAnimals.forEach(animal => {
+                    animal.position = '40px';
+                });
             }
             this.decisionSE.play();
         },
@@ -373,8 +373,8 @@ Vue.component('game', {
             return array;
         },
         mainProcess() {
-            for (let i = 0; i < this.moveAnimals.length; i++) {
-                if (!this.moveAnimals[i].initState && this.gameActive) {
+            this.moveAnimals.forEach(moveAnimal => {
+                if (!moveAnimal.initState && this.gameActive) {
                     //コマを初期化
                     let result = this.initAnimal();
 
@@ -382,47 +382,47 @@ Vue.component('game', {
                         this.appearCount++;
                     }
 
-                    this.moveAnimals[i].initState = true;
-                    this.moveAnimals[i].appearState = result[0];
-                    this.moveAnimals[i].rare = result[1];
-                    this.moveAnimals[i].touch = false;
-                    this.moveAnimals[i].position = '40px';
-                    this.moveAnimals[i].waitTime = 20;
-                } else if (this.moveAnimals[i].appearState && this.moveAnimals[i].initState) {
-                    if (!this.moveAnimals[i].touch) {
+                    moveAnimal.initState = true;
+                    moveAnimal.appearState = result[0];
+                    moveAnimal.rare = result[1];
+                    moveAnimal.touch = false;
+                    moveAnimal.position = '40px';
+                    moveAnimal.waitTime = 20;
+                } else if (moveAnimal.appearState && moveAnimal.initState) {
+                    if (!moveAnimal.touch) {
                         //上げる処理
-                        if (parseInt(this.moveAnimals[i].position) > -90 && this.moveAnimals[i].waitTime > 0) {
-                            let posi = parseInt(this.moveAnimals[i].position);
+                        if (parseInt(moveAnimal.position) > -90 && moveAnimal.waitTime > 0) {
+                            let posi = parseInt(moveAnimal.position);
                             posi = posi - 3 * this.velocity;
-                            this.moveAnimals[i].position = posi + 'px';
-                        } else if (parseInt(this.moveAnimals[i].position) < -90 && this.moveAnimals[i].waitTime > 0) {
-                            this.moveAnimals[i].waitTime--;
+                            moveAnimal.position = posi + 'px';
+                        } else if (parseInt(moveAnimal.position) < -90 && moveAnimal.waitTime > 0) {
+                            moveAnimal.waitTime--;
                         } else {
-                            if (parseInt(this.moveAnimals[i].position) < 40) {
-                                let posi = parseInt(this.moveAnimals[i].position);
+                            if (parseInt(moveAnimal.position) < 40) {
+                                let posi = parseInt(moveAnimal.position);
                                 posi = posi + 3 * this.velocity;
-                                this.moveAnimals[i].position = posi + 'px';
+                                moveAnimal.position = posi + 'px';
                             } else {
-                                this.moveAnimals[i].initState = false;
+                                moveAnimal.initState = false;
                                 this.appearCount--;
                             }
                         }
                     } else {
-                        if (parseInt(this.moveAnimals[i].position) < 40) {
-                            let posi = parseInt(this.moveAnimals[i].position);
+                        if (parseInt(moveAnimal.position) < 40) {
+                            let posi = parseInt(moveAnimal.position);
                             posi = posi + 2 * this.velocity;
-                            this.moveAnimals[i].position = posi + 'px';
+                            moveAnimal.position = posi + 'px';
                         } else {
-                            this.moveAnimals[i].initState = false;
+                            moveAnimal.initState = false;
                             this.appearCount--;
                         }
                     }
                 } else {
                     if (this.appearCount == 0) {
-                        this.moveAnimals[i].initState = false;
+                        moveAnimal.initState = false;
                     }
                 }
-            }
+            });
         },
         clickAnimal(num, rare) {
             if (!this.moveAnimals[num].touch) {
