@@ -312,23 +312,9 @@ Vue.component('game', {
             clearInterval(this.gameObject2);
         },
         initAnimal() {
-            let array = Array(2);
             const appear = Math.floor(Math.random() * 3);
             const rare = Math.floor(Math.random() * 10);
-
-            if (appear <= 1) {
-                array[0] = true;
-            } else {
-                array[0] = false;
-            }
-
-            if (rare <= 1) {
-                array[1] = true;
-            } else {
-                array[1] = false;
-            }
-
-            return array;
+            return [appear <= 1, rare <= 1];
         },
         mainProcess() {
             this.moveAnimals.forEach(moveAnimal => {
