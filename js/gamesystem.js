@@ -1,5 +1,5 @@
-Vue.component('game',{
-    template:`
+Vue.component('game', {
+    template: `
     <div v-if="gameview === 0">
         <div style="position:absolute; top:250px; left:60%;">
             <button @click ="switchGameview" type="button" class="btn btn-light btn-outline-primary" style="width:200px; height:80px;">
@@ -182,104 +182,54 @@ Vue.component('game',{
         </div>
     </div>
     `,
-    data: () =>{
-        return {
-            /*調整用変数*/
-            velocity: 3,
+    data: () => ({
+        /*調整用変数*/
+        velocity: 3,
 
-            /* ゲーム制御系変数 */
-            gameview: 0, //0スタート画面,1ゲーム画面
-            guide: true,//ガイド画面
-            result: false,
-            formersec: 3,//開始カウントダウン用
-            gameActive: false, //trueでゲームスタート
-            score: 0, //スコア
-            scoreStr: '000000',//ディコード用スコア
-            Time: 180, //3分(ゲーム時間)
-            min: '03', //ディコード用分
-            sec: '00', //ディコード用秒
+        /* ゲーム制御系変数 */
+        gameview: 0, //0スタート画面,1ゲーム画面
+        guide: true, //ガイド画面
+        result: false,
+        formersec: 3, //開始カウントダウン用
+        gameActive: false, //trueでゲームスタート
+        score: 0, //スコア
+        scoreStr: '000000', //ディコード用スコア
+        Time: 180, //3分(ゲーム時間)
+        min: '03', //ディコード用分
+        sec: '00', //ディコード用秒
 
-            gameObject1: null, 
-            gameObject2: null, 
+        gameObject1: null,
+        gameObject2: null,
 
-            /* 出現css適用 */
-            hide: 'hide',
-            show: 'show',
-            touch: 'touch',
-            touchoff: 'touchoff',
+        /* 出現css適用 */
+        hide: 'hide',
+        show: 'show',
+        touch: 'touch',
+        touchoff: 'touchoff',
 
-            /* 出現アニマル制御系変数*/
-            appearCount: 0,
-            moveAnimals: [
-                {
-                    initState: false,//初期化待ちかどうか
-                    appearState: false,//出現するコマかどうか
-                    rare: false,//レアコマかどうか
-                    touch: false,//触れられたかどうか
-                    position: '40px',//位置
-                    waitTime: 40,//待機時間
-
-                },
-                {
-                    initState: false,
-                    appearState: false,
-                    rare: false,
-                    touch: false,
-                    position: '40px',
-                    waitTime: 40,//待機時間
-
-                },
-                {
-                    initState: false,
-                    appearState: false,
-                    rare: false,
-                    touch: false,
-                    position: '40px',
-                    waitTime: 40,//待機時間
-
-                },
-                {
-                    initState: false,
-                    appearState: false,
-                    rare: false,
-                    touch: false,
-                    position: '40px',
-                    waitTime: 40,//待機時間
-
-                },
-                {
-                    initState: false,
-                    appearState: false,
-                    rare: false,
-                    touch: false,
-                    position: '40px',
-                    waitTime: 40,//待機時間
-
-                },
-                {
-                    initState: false,
-                    appearState: false,
-                    rare: false,
-                    touch: false,
-                    position: '40px',
-                    waitTime: 40,//待機時間
-
-                },
-            ],
-            /*オーディオ(効果音)*/
-            decisionSE: new Audio('se/decision.mp3'),
-            hitSE: new Audio('se/touched.mp3'),
-            hitSE2: new Audio('se/touched.mp3'),//多重再生できないので予備用Audio
-            countSE: new Audio('se/countdown.mp3'),
-            resultSE: new Audio('se/result.mp3'),
-            /*オーディオ制御用*/
-            AudioOff: false,
-            toggleHit: false,
-        }
-    },
-    mounted(){
+        /* 出現アニマル制御系変数*/
+        appearCount: 0,
+        moveAnimals: new Array(6).fill().map(() => ({
+            initState: false, //初期化待ちかどうか
+            appearState: false, //出現するコマかどうか
+            rare: false, //レアコマかどうか
+            touch: false, //触れられたかどうか
+            position: '40px', //位置
+            waitTime: 40 //待機時間
+        })),
+        /*オーディオ(効果音)*/
+        decisionSE: new Audio('se/decision.mp3'),
+        hitSE: new Audio('se/touched.mp3'),
+        hitSE2: new Audio('se/touched.mp3'), //多重再生できないので予備用Audio
+        countSE: new Audio('se/countdown.mp3'),
+        resultSE: new Audio('se/result.mp3'),
+        /*オーディオ制御用*/
+        AudioOff: false,
+        toggleHit: false
+    }),
+    mounted() {
         //ページが読み込まれたら実行
-        window.addEventListener('load', ()=>{
+        window.addEventListener('load', () => {
             this.decisionSE.volume = 0.08;
             this.hitSE.volume = 0.08;
             this.hitSE2.volume = 0.08;
@@ -289,46 +239,43 @@ Vue.component('game',{
     },
     methods: {
         //ゲームビューを切り替える処理
-        switchGameview: function(){
-            if(this.gameview < 1){
+        switchGameview() {
+            if (this.gameview < 1) {
                 this.gameview++;
-
-            }else{
-                this.gameview=0;
+            } else {
+                this.gameview = 0;
 
                 //リセット
                 this.guide = true;
                 this.result = false;
                 this.formersec = 3;
                 this.gameActive = false;
-                this.score = 0; 
+                this.score = 0;
                 this.scoreStr = '000000';
                 this.Time = 180;
                 this.min = '03';
                 this.sec = '00';
 
-                for(let i=0; i<this.moveAnimals.length; i++){
-                    this.moveAnimals[i].position = '40px';
-                }
+                this.moveAnimals.forEach(animal => {
+                    animal.position = '40px';
+                });
             }
             this.decisionSE.play();
         },
-        startGame: function(){
+        startGame() {
             this.guide = false;
 
             this.gameProcess();
         },
-        gameProcess: function(){
-            if(!this.gameActive){
-                this.countSE.play();
-
-                this.gameObject1 = setInterval(this.countdown, 1000);
-            }
+        gameProcess() {
+            if (this.gameActive) return;
+            this.countSE.play();
+            this.gameObject1 = setInterval(this.countdown, 1000);
         },
-        countdown: function(){
-            if(this.formersec > 0){
-                this.formersec --;
-            }else{
+        countdown() {
+            if (this.formersec > 0) {
+                this.formersec--;
+            } else {
                 this.formersec = 0;
                 this.gameActive = true;
 
@@ -338,14 +285,16 @@ Vue.component('game',{
                 this.gameObject2 = setInterval(this.mainProcess, 25);
             }
         },
-        counter: function(){
+        counter() {
             //カウントダウンタイマー処理
-            if(this.Time > 0){
-                this.Time --;
-                this.min = (parseInt(this.Time / 60)).toString().padStart(2, '0');
-                this.sec = (this.Time - parseInt(this.min)*60).toString().padStart(2, '0');
+            if (this.Time > 0) {
+                this.Time--;
+                this.min = parseInt(this.Time / 60)
+                    .toString()
+                    .padStart(2, '0');
+                this.sec = (this.Time - parseInt(this.min) * 60).toString().padStart(2, '0');
                 //console.log(this.Time);
-            }else{
+            } else {
                 this.gameActive = false;
 
                 setTimeout(this.stopGame, 1000);
@@ -356,107 +305,81 @@ Vue.component('game',{
             }
         },
         //ゲームを終える関数
-        stopGame: function(){
+        stopGame() {
             clearInterval(this.gameObject1);
             clearInterval(this.gameObject2);
         },
-        initAnimal: function(){
-            let array = Array(2);
+        initAnimal() {
             const appear = Math.floor(Math.random() * 3);
             const rare = Math.floor(Math.random() * 10);
-
-            if(appear <= 1){
-                array[0] = true;
-            }else{
-                array[0] = false;
-            }
-
-            if(rare <= 1){
-                array[1] = true;
-            }else{
-                array[1] = false;
-            }
-
-            return array;
+            return [appear <= 1, rare <= 1];
         },
-        mainProcess: function(){
-                for(let i=0; i<this.moveAnimals.length; i++){
-                    if(!this.moveAnimals[i].initState && this.gameActive){
-                        //コマを初期化
-                        let result = this.initAnimal();
+        mainProcess() {
+            this.moveAnimals.forEach(moveAnimal => {
+                if (!moveAnimal.initState && this.gameActive) {
+                    //コマを初期化
+                    const result = this.initAnimal();
 
-                        if(result[0]){
-                            this.appearCount ++;
+                    if (result[0]) this.appearCount++;
+
+                    moveAnimal.initState = true;
+                    moveAnimal.appearState = result[0];
+                    moveAnimal.rare = result[1];
+                    moveAnimal.touch = false;
+                    moveAnimal.position = '40px';
+                    moveAnimal.waitTime = 20;
+                } else if (moveAnimal.appearState && moveAnimal.initState) {
+                    if (moveAnimal.touch) {
+                        if (parseInt(moveAnimal.position) < 40) {
+                            let posi = parseInt(moveAnimal.position);
+                            posi = posi + 2 * this.velocity;
+                            moveAnimal.position = posi + 'px';
+                        } else {
+                            moveAnimal.initState = false;
+                            this.appearCount--;
                         }
-
-                        this.moveAnimals[i].initState = true;
-                        this.moveAnimals[i].appearState = result[0];
-                        this.moveAnimals[i].rare = result[1];
-                        this.moveAnimals[i].touch = false;
-                        this.moveAnimals[i].position = '40px';
-                        this.moveAnimals[i].waitTime = 20;
-
-                    }else if(this.moveAnimals[i].appearState && this.moveAnimals[i].initState){
-                        if(!this.moveAnimals[i].touch){
-                            //上げる処理
-                            if((parseInt(this.moveAnimals[i].position) > -90)&&(this.moveAnimals[i].waitTime > 0)){
-                                let posi = parseInt(this.moveAnimals[i].position);
-                                posi = posi - 3 * this.velocity;
-                                this.moveAnimals[i].position = posi + 'px';
-
-                            }else if((parseInt(this.moveAnimals[i].position) < -90)&&(this.moveAnimals[i].waitTime > 0)){
-                                this.moveAnimals[i].waitTime --;
-                            }else {
-                                if((parseInt(this.moveAnimals[i].position) < 40)){
-                                    let posi = parseInt(this.moveAnimals[i].position);
-                                    posi = posi + 3 * this.velocity;
-                                    this.moveAnimals[i].position = posi + 'px';
-                                }else{
-                                    this.moveAnimals[i].initState = false;
-                                    this.appearCount--;
-                                }
-                            }
-                        }else{
-                            if(parseInt(this.moveAnimals[i].position) < 40){
-                                let posi = parseInt(this.moveAnimals[i].position);
-                                posi = posi + 2 * this.velocity;
-                                this.moveAnimals[i].position = posi + 'px';
-
-                            }else{
-                                this.moveAnimals[i].initState = false;
+                    } else {
+                        //上げる処理
+                        if (parseInt(moveAnimal.position) > -90 && moveAnimal.waitTime > 0) {
+                            let posi = parseInt(moveAnimal.position);
+                            posi = posi - 3 * this.velocity;
+                            moveAnimal.position = posi + 'px';
+                        } else if (parseInt(moveAnimal.position) < -90 && moveAnimal.waitTime > 0) {
+                            moveAnimal.waitTime--;
+                        } else {
+                            if (parseInt(moveAnimal.position) < 40) {
+                                let posi = parseInt(moveAnimal.position);
+                                posi = posi + 3 * this.velocity;
+                                moveAnimal.position = posi + 'px';
+                            } else {
+                                moveAnimal.initState = false;
                                 this.appearCount--;
                             }
                         }
-                    }else{
-                        if(this.appearCount == 0){
-                            this.moveAnimals[i].initState = false;
-                        }
                     }
+                } else {
+                    if (!this.appearCount) moveAnimal.initState = false;
                 }
+            });
         },
-        clickAnimal: function(num, rare){
-            if(!this.moveAnimals[num].touch){
-                this.moveAnimals[num].touch = true;
+        clickAnimal(num, rare) {
+            if (this.moveAnimals[num].touch) return;
 
-                if(!this.toggleHit){
-                    this.hitSE2.play();
+            this.moveAnimals[num].touch = true;
 
-                    this.toggleHit = true;
-                }else{
-                    this.hitSE.play();
+            if (this.toggleHit) {
+                this.hitSE.play();
 
-                    this.toggleHit = false;
-                }
+                this.toggleHit = false;
+            } else {
+                this.hitSE2.play();
 
-                if(rare){
-                    this.score += 300;
-                }else{
-                    this.score += 100;
-                }
-
-                this.scoreStr = this.score.toString().padStart(6, '0');
+                this.toggleHit = true;
             }
-        }
-    },
 
+            this.score += rare ? 300 : 100;
+
+            this.scoreStr = this.score.toString().padStart(6, '0');
+        }
+    }
 });
