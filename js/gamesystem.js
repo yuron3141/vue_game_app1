@@ -209,56 +209,14 @@ Vue.component('game', {
 
         /* 出現アニマル制御系変数*/
         appearCount: 0,
-        moveAnimals: [
-            {
-                initState: false, //初期化待ちかどうか
-                appearState: false, //出現するコマかどうか
-                rare: false, //レアコマかどうか
-                touch: false, //触れられたかどうか
-                position: '40px', //位置
-                waitTime: 40 //待機時間
-            },
-            {
-                initState: false,
-                appearState: false,
-                rare: false,
-                touch: false,
-                position: '40px',
-                waitTime: 40 //待機時間
-            },
-            {
-                initState: false,
-                appearState: false,
-                rare: false,
-                touch: false,
-                position: '40px',
-                waitTime: 40 //待機時間
-            },
-            {
-                initState: false,
-                appearState: false,
-                rare: false,
-                touch: false,
-                position: '40px',
-                waitTime: 40 //待機時間
-            },
-            {
-                initState: false,
-                appearState: false,
-                rare: false,
-                touch: false,
-                position: '40px',
-                waitTime: 40 //待機時間
-            },
-            {
-                initState: false,
-                appearState: false,
-                rare: false,
-                touch: false,
-                position: '40px',
-                waitTime: 40 //待機時間
-            }
-        ],
+        moveAnimals: new Array(6).fill({
+            initState: false, //初期化待ちかどうか
+            appearState: false, //出現するコマかどうか
+            rare: false, //レアコマかどうか
+            touch: false, //触れられたかどうか
+            position: '40px', //位置
+            waitTime: 40 //待機時間
+        }),
         /*オーディオ(効果音)*/
         decisionSE: new Audio('se/decision.mp3'),
         hitSE: new Audio('se/touched.mp3'),
