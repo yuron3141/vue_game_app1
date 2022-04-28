@@ -1,0 +1,13 @@
+.show{
+    display: inline;
+}
+.hide{
+    display: none;
+}
+
+.touch{
+    cursor: pointer;
+}
+.touchoff{
+    cursor: auto;
+}
