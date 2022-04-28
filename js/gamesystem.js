@@ -268,11 +268,9 @@ Vue.component('game', {
             this.gameProcess();
         },
         gameProcess() {
-            if (!this.gameActive) {
-                this.countSE.play();
-
-                this.gameObject1 = setInterval(this.countdown, 1000);
-            }
+            if (this.gameActive) return;
+            this.countSE.play();
+            this.gameObject1 = setInterval(this.countdown, 1000);
         },
         countdown() {
             if (this.formersec > 0) {
@@ -369,27 +367,27 @@ Vue.component('game', {
             });
         },
         clickAnimal(num, rare) {
-            if (!this.moveAnimals[num].touch) {
-                this.moveAnimals[num].touch = true;
+            if (this.moveAnimals[num].touch) return;
 
-                if (!this.toggleHit) {
-                    this.hitSE2.play();
+            this.moveAnimals[num].touch = true;
 
-                    this.toggleHit = true;
-                } else {
-                    this.hitSE.play();
+            if (!this.toggleHit) {
+                this.hitSE2.play();
 
-                    this.toggleHit = false;
-                }
+                this.toggleHit = true;
+            } else {
+                this.hitSE.play();
 
-                if (rare) {
-                    this.score += 300;
-                } else {
-                    this.score += 100;
-                }
-
-                this.scoreStr = this.score.toString().padStart(6, '0');
+                this.toggleHit = false;
             }
+
+            if (rare) {
+                this.score += 300;
+            } else {
+                this.score += 100;
+            }
+
+            this.scoreStr = this.score.toString().padStart(6, '0');
         }
     }
 });
