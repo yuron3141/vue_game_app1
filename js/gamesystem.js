@@ -318,11 +318,9 @@ Vue.component('game', {
             this.moveAnimals.forEach(moveAnimal => {
                 if (!moveAnimal.initState && this.gameActive) {
                     //コマを初期化
-                    let result = this.initAnimal();
+                    const result = this.initAnimal();
 
-                    if (result[0]) {
-                        this.appearCount++;
-                    }
+                    if (result[0]) this.appearCount++;
 
                     moveAnimal.initState = true;
                     moveAnimal.appearState = result[0];
@@ -331,7 +329,16 @@ Vue.component('game', {
                     moveAnimal.position = '40px';
                     moveAnimal.waitTime = 20;
                 } else if (moveAnimal.appearState && moveAnimal.initState) {
-                    if (!moveAnimal.touch) {
+                    if (moveAnimal.touch) {
+                        if (parseInt(moveAnimal.position) < 40) {
+                            let posi = parseInt(moveAnimal.position);
+                            posi = posi + 2 * this.velocity;
+                            moveAnimal.position = posi + 'px';
+                        } else {
+                            moveAnimal.initState = false;
+                            this.appearCount--;
+                        }
+                    } else {
                         //上げる処理
                         if (parseInt(moveAnimal.position) > -90 && moveAnimal.waitTime > 0) {
                             let posi = parseInt(moveAnimal.position);
@@ -349,20 +356,9 @@ Vue.component('game', {
                                 this.appearCount--;
                             }
                         }
-                    } else {
-                        if (parseInt(moveAnimal.position) < 40) {
-                            let posi = parseInt(moveAnimal.position);
-                            posi = posi + 2 * this.velocity;
-                            moveAnimal.position = posi + 'px';
-                        } else {
-                            moveAnimal.initState = false;
-                            this.appearCount--;
-                        }
                     }
                 } else {
-                    if (this.appearCount == 0) {
-                        moveAnimal.initState = false;
-                    }
+                    if (!this.appearCount) moveAnimal.initState = false;
                 }
             });
         },
@@ -371,21 +367,17 @@ Vue.component('game', {
 
             this.moveAnimals[num].touch = true;
 
-            if (!this.toggleHit) {
-                this.hitSE2.play();
-
-                this.toggleHit = true;
-            } else {
+            if (this.toggleHit) {
                 this.hitSE.play();
 
                 this.toggleHit = false;
+            } else {
+                this.hitSE2.play();
+
+                this.toggleHit = true;
             }
 
-            if (rare) {
-                this.score += 300;
-            } else {
-                this.score += 100;
-            }
+            this.score += rare ? 300 : 100;
 
             this.scoreStr = this.score.toString().padStart(6, '0');
         }
